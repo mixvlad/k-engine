@@ -1,6 +1,6 @@
 {
   "name": "k-engine",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Static-site engine powering KozTV projects",
   "bin": { "k-engine": "./cli.js" },
   "files": ["lib", "templates", "static", "build.js", "serve.js", "cli.js"],

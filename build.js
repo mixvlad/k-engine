@@ -35,6 +35,8 @@ async function processDir(srcDir) {
             await fs.ensureDir(destPath);
             await processDir(fullPath);
         } else if (entry.isFile()) {
+            // Отслеживаем обработанные файлы
+            processedFiles.add(destPath);
             await processContentFile(fullPath, destPath, relPath, entry, forceRegenerate);
         }
     }
@@ -69,6 +71,8 @@ async function copyStaticFiles() {
                 continue;
             }
 
+            // Отслеживаем обработанные статические файлы
+            processedFiles.add(destPath);
             await processFile(srcPath, destPath, relPath, entry, forceRegenerate);
         }
     }
@@ -76,13 +80,59 @@ async function copyStaticFiles() {
     await walk(staticSrc);
 }
 
+// Глобальная переменная для отслеживания обработанных файлов
+let processedFiles = new Set();
+
+// Функция для очистки файлов и папок в docs, которые больше не должны существовать
+async function cleanupRemovedFiles() {
+    if (!fs.existsSync(config.outputDir)) {
+        return;
+    }
+
+    async function cleanupDir(dirPath) {
+        if (!fs.existsSync(dirPath)) {
+            return;
+        }
+
+        const entries = await fs.readdir(dirPath, { withFileTypes: true });
+        
+        for (const entry of entries) {
+            const fullPath = path.join(dirPath, entry.name);
+            
+            if (entry.isDirectory()) {
+                // Рекурсивно очищаем подпапки
+                await cleanupDir(fullPath);
+                
+                // Проверяем, остались ли файлы в папке после очистки
+                const remainingEntries = await fs.readdir(fullPath, { withFileTypes: true });
+                if (remainingEntries.length === 0) {
+                    console.log(`Removing empty directory from docs: ${entry.name}`);
+                    await fs.remove(fullPath);
+                }
+            } else if (entry.isFile()) {
+                // Удаляем файлы, которые не были обработаны в текущем билде
+                if (!processedFiles.has(fullPath)) {
+                    console.log(`Removing file from docs: ${entry.name}`);
+                    await fs.remove(fullPath);
+                }
+            }
+        }
+    }
+
+    await cleanupDir(config.outputDir);
+}
+
 // Обрабатываем все Markdown файлы и копируем ресурсы
 async function build() {
+    // Очищаем список обработанных файлов в начале каждого билда
+    processedFiles.clear();
+    
     if (shouldClean) {
         await fs.emptyDir(config.outputDir);
     } else {
         await fs.ensureDir(config.outputDir);
     }
+    
     await copyStaticFiles();
     await processDir(config.sourceDir);
 
@@ -95,6 +145,9 @@ async function build() {
 
     // After main content copied, create legacy redirects
     await createRedirects();
+    
+    // В конце очищаем файлы и папки, которые больше не должны существовать
+    await cleanupRemovedFiles();
 }
 
 // Функция для наблюдения за изменениями

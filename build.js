@@ -1,6 +1,6 @@
-const fs = require('fs-extra');
-const path = require('path');
-const { 
+import fs from 'fs-extra';
+import path from 'path';
+import { 
     config, 
     isDev, 
     shouldClean, 
@@ -12,7 +12,7 @@ const {
     generateImageSizes,
     processContentFile,
     processFile
-} = require('./lib');
+} from './lib/index.js';
 
 // Available command line flags:
 // --watch: Enable watch mode for development

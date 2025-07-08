@@ -1,8 +1,10 @@
-const browserSync = require('browser-sync').create();
-const bsConfig = require('./lib/bs-config.js');
+import browserSync from 'browser-sync';
+import bsConfig from './lib/bs-config.js';
+
+const bs = browserSync.create();
 
 // Start BrowserSync with configuration
-browserSync.init(bsConfig);
+bs.init(bsConfig);
 
 console.log(`Development server is running at http://localhost:${bsConfig.port}`);
 console.log('Hot reload is enabled - changes will automatically refresh the browser');

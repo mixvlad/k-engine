@@ -490,7 +490,7 @@ nav.narrow {
   gap: calc(2*var(--gap));
   align-items: center;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: left;
 }
 
 /* Utility */

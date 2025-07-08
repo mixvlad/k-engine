@@ -489,6 +489,8 @@ nav.narrow {
   display: flex;
   gap: calc(2*var(--gap));
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* Utility */
@@ -618,6 +620,11 @@ body.home nav.narrow {
   .social-icons .g-ytsubscribe {
     transform: scale(0.7);
   }
+  
+  /* Navigation adjustments for tablets */
+  nav.narrow {
+    gap: calc(var(--gap) * 1.2);
+  }
 }
 
 @media (max-width: 500px) {
@@ -679,6 +686,17 @@ body.home nav.narrow {
   
   .social-icons .g-ytsubscribe {
     transform: scale(0.5);
+  }
+  
+  /* Navigation adjustments for mobile */
+  nav.narrow {
+    gap: calc(var(--gap) * 0.8);
+    padding: 0 10px;
+  }
+  
+  nav.narrow a {
+    font-size: 0.9em;
+    padding: 5px 8px;
   }
 }
 

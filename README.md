@@ -93,7 +93,7 @@ In `lib/config.js` you can configure:
 
 ### Template customization
 - Add `templates/` folder in project root
-- Override `templates/post.html` to change design
+- Override `templates/page.html` to change design
 
 ### Override static files
 - Add `static/` folder in project root
@@ -108,6 +108,7 @@ In `lib/config.js` you can configure:
   "cname": "your-domain.com",
   "sourceDir": "content",
   "outputDir": "docs",
+  "googleAnalytics": "G-XXXXXXXXXX",
   "images": {
     "sizes": [320, 640, 1280],
     "quality": { "webp": 90, "avif": 60 }
@@ -115,7 +116,7 @@ In `lib/config.js` you can configure:
 }
 ```
 
-Если параметр не задан, используется значение по умолчанию. Если `cname` не указан или равен `null`, файл CNAME не будет создан.
+Если параметр не задан, используется значение по умолчанию. Если `cname` не указан или равен `null`, файл CNAME не будет создан. Если `googleAnalytics` не указан, Google Analytics не будет подключен.
 
 ## Publishing to npm
 

@@ -13,6 +13,11 @@ import {
     processContentFile,
     processFile
 } from './lib/index.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Available command line flags:
 // --watch: Enable watch mode for development
@@ -35,7 +40,6 @@ async function processDir(srcDir) {
             await processDir(fullPath);
         } else if (entry.isFile()) {
             // Отслеживаем обработанные файлы
-            processedFiles.add(destPath);
             await processContentFile(fullPath, destPath, relPath, entry, forceRegenerate, (filePath) => {
                 processedFiles.add(filePath);
             });
@@ -45,26 +49,37 @@ async function processDir(srcDir) {
 
 // Функция для безопасного копирования статических файлов
 async function copyStaticFiles() {
-    // Ищем статические файлы в текущей директории проекта
-    let staticSrc = 'static';
-    if (!fs.existsSync(staticSrc)) {
-        // Если не найдены в текущей директории, используем из пакета k-engine
-        staticSrc = path.join(__dirname, 'static');
-        if (!fs.existsSync(staticSrc)) {
-            console.log('No static files found, skipping static file copy');
-            return;
-        }
-    }
-    
     const staticDest = path.join(config.outputDir, 'static');
     await fs.ensureDir(staticDest);
 
+    // Сначала копируем статические файлы из модуля k-engine
+    const kEngineStaticSrc = path.join(__dirname, 'static');
+    if (fs.existsSync(kEngineStaticSrc)) {
+        console.log('Copying static files from k-engine module...');
+        await copyStaticDirectory(kEngineStaticSrc, staticDest);
+    }
+
+    // Затем копируем статические файлы из текущего проекта (могут дополнять или перезаписывать)
+    const projectStaticSrc = 'static';
+    if (fs.existsSync(projectStaticSrc)) {
+        console.log('Copying static files from project directory...');
+        await copyStaticDirectory(projectStaticSrc, staticDest);
+    }
+
+    if (!fs.existsSync(kEngineStaticSrc) && !fs.existsSync(projectStaticSrc)) {
+        console.log('No static files found, skipping static file copy');
+        return;
+    }
+}
+
+// Вспомогательная функция для копирования директории статических файлов
+async function copyStaticDirectory(srcDir, destDir) {
     async function walk(dir) {
         const entries = await fs.readdir(dir, { withFileTypes: true });
         for (const entry of entries) {
             const srcPath = path.join(dir, entry.name);
-            const relPath = path.relative(staticSrc, srcPath).replace(/\\/g, '/');
-            const destPath = path.join(staticDest, relPath);
+            const relPath = path.relative(srcDir, srcPath).replace(/\\/g, '/');
+            const destPath = path.join(destDir, relPath);
 
             if (entry.isDirectory()) {
                 await fs.ensureDir(destPath);
@@ -80,7 +95,7 @@ async function copyStaticFiles() {
         }
     }
 
-    await walk(staticSrc);
+    await walk(srcDir);
 }
 
 // Глобальная переменная для отслеживания обработанных файлов

@@ -19,13 +19,7 @@
     <link rel="stylesheet" href="{{styleCss}}">
     
     <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XB3YH3ZZXT"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XB3YH3ZZXT');
-    </script>
+    {{googleAnalytics}}
     
     <script>
         {{devReload}}
@@ -35,11 +29,7 @@
     <script src="{{root}}static/js/img-loader.js"></script>
 </head>
 <body class="{{bodyClass}}">
-    <header>
-        <nav class="narrow">
-            <a href="{{root}}">Home</a>
-        </nav>
-    </header>
+    {{> header}}
     
     <main>
         <article>
@@ -52,9 +42,7 @@
         </article>
     </main>
 
-    <footer class="narrow">
-        <p>© 2014 – {{year}}  Mike Koz<br><a href="mailto:m@koz.tv">m@koz.tv</a> </p>
-    </footer>
+    {{> footer}}
 
     <script>
         if (document.fonts && document.fonts.ready) {

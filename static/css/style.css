@@ -384,7 +384,7 @@ blockquote {
   display: flex;
   flex-direction: column;
   gap: var(--gap);
-  padding: 0;
+  padding-top: var(--gap);
   list-style: none;
 }
 
@@ -583,9 +583,9 @@ body.home header {
   margin-bottom: calc(var(--gap) * 2);
 }
 
-/* Hide Home navigation on home page */
+/* Show navigation on home page */
 body.home nav.narrow {
-  display: none;
+  display: flex;
 }
 
 /* About section responsive layout */

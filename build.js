@@ -9,7 +9,6 @@ const {
     subscribers,
     hashContent,
     shouldRegenerateFile,
-    createRedirects,
     generateImageSizes,
     processContentFile,
     processFile
@@ -37,7 +36,9 @@ async function processDir(srcDir) {
         } else if (entry.isFile()) {
             // Отслеживаем обработанные файлы
             processedFiles.add(destPath);
-            await processContentFile(fullPath, destPath, relPath, entry, forceRegenerate);
+            await processContentFile(fullPath, destPath, relPath, entry, forceRegenerate, (filePath) => {
+                processedFiles.add(filePath);
+            });
         }
     }
 }
@@ -73,7 +74,9 @@ async function copyStaticFiles() {
 
             // Отслеживаем обработанные статические файлы
             processedFiles.add(destPath);
-            await processFile(srcPath, destPath, relPath, entry, forceRegenerate);
+            await processFile(srcPath, destPath, relPath, entry, forceRegenerate, (filePath) => {
+                processedFiles.add(filePath);
+            });
         }
     }
 
@@ -106,13 +109,13 @@ async function cleanupRemovedFiles() {
                 // Проверяем, остались ли файлы в папке после очистки
                 const remainingEntries = await fs.readdir(fullPath, { withFileTypes: true });
                 if (remainingEntries.length === 0) {
-                    console.log(`Removing empty directory from docs: ${entry.name}`);
+                    console.log(`Removing empty directory from docs: ${fullPath}`);
                     await fs.remove(fullPath);
                 }
             } else if (entry.isFile()) {
                 // Удаляем файлы, которые не были обработаны в текущем билде
                 if (!processedFiles.has(fullPath)) {
-                    console.log(`Removing file from docs: ${entry.name}`);
+                    console.log(`Removing file from docs: ${fullPath}`);
                     await fs.remove(fullPath);
                 }
             }
@@ -137,15 +140,16 @@ async function build() {
     await processDir(config.sourceDir);
 
     // Create .nojekyll file for GitHub Pages
-    await fs.writeFile(path.join(config.outputDir, '.nojekyll'), '# This file tells GitHub Pages not to use Jekyll');
+    const nojekyllPath = path.join(config.outputDir, '.nojekyll');
+    await fs.writeFile(nojekyllPath, '# This file tells GitHub Pages not to use Jekyll');
+    processedFiles.add(nojekyllPath);
 
     // Ensure CNAME file exists for custom domain
+    const cnamePath = path.join(config.outputDir, 'CNAME');
     const cnameContent = 'koz.tv';
-    await fs.writeFile(path.join(config.outputDir, 'CNAME'), cnameContent);
+    await fs.writeFile(cnamePath, cnameContent);
+    processedFiles.add(cnamePath);
 
-    // After main content copied, create legacy redirects
-    await createRedirects();
-    
     // В конце очищаем файлы и папки, которые больше не должны существовать
     await cleanupRemovedFiles();
 }

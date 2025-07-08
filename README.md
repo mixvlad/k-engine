@@ -81,7 +81,7 @@ npm run build -- --clean
 
 ### GitHub Pages ready
 - Automatic `.nojekyll` file creation
-- CNAME support for custom domains
+- CNAME support for custom domains (configurable)
 
 ## Configuration
 
@@ -98,6 +98,24 @@ In `lib/config.js` you can configure:
 ### Override static files
 - Add `static/` folder in project root
 - Your files will be copied over default ones
+
+### CNAME и другие настройки через внешний файл
+
+Создайте `k-engine.config.json` или `config.json` в корне проекта. Вы можете переопределить любые параметры:
+
+```json
+{
+  "cname": "your-domain.com",
+  "sourceDir": "content",
+  "outputDir": "docs",
+  "images": {
+    "sizes": [320, 640, 1280],
+    "quality": { "webp": 90, "avif": 60 }
+  }
+}
+```
+
+Если параметр не задан, используется значение по умолчанию. Если `cname` не указан или равен `null`, файл CNAME не будет создан.
 
 ## Publishing to npm
 

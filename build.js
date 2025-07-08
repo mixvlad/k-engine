@@ -144,11 +144,15 @@ async function build() {
     await fs.writeFile(nojekyllPath, '# This file tells GitHub Pages not to use Jekyll');
     processedFiles.add(nojekyllPath);
 
-    // Ensure CNAME file exists for custom domain
-    const cnamePath = path.join(config.outputDir, 'CNAME');
-    const cnameContent = 'koz.tv';
-    await fs.writeFile(cnamePath, cnameContent);
-    processedFiles.add(cnamePath);
+    // Create CNAME file for custom domain if configured
+    if (config.cname) {
+        const cnamePath = path.join(config.outputDir, 'CNAME');
+        await fs.writeFile(cnamePath, config.cname);
+        processedFiles.add(cnamePath);
+        console.log(`Created CNAME file with domain: ${config.cname}`);
+    } else {
+        console.log('CNAME not configured, skipping CNAME file creation');
+    }
 
     // В конце очищаем файлы и папки, которые больше не должны существовать
     await cleanupRemovedFiles();

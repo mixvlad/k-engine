@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="icon" type="image/x-icon" href="{{root}}static/img/logo.ico">
+
+    <!-- Preconnects for external resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+    <!-- Font Awesome (loaded after initial render) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" media="print" onload="this.media='all'">
+
+    <!-- Site styles: preload for early fetch, standard link to avoid FOUC -->
+    <link rel="preload" href="{{styleCss}}" as="style">
+    <link rel="stylesheet" href="{{styleCss}}">
+    
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XB3YH3ZZXT"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-XB3YH3ZZXT');
+    </script>
+    
+    <script>
+        {{devReload}}
+    </script>
+
+    <!-- Inline image loader script early to wrap images before they start downloading -->
+    <script src="{{root}}static/js/img-loader.js"></script>
+</head>
+<body class="{{bodyClass}}">
+    <header>
+        <nav class="narrow">
+            <a href="{{root}}">Home</a>
+        </nav>
+    </header>
+    
+    <main>
+        <article>
+            
+            <div class="content">
+                <h1>{{title}}</h1>
+                <div class="date">{{date}}</div>
+                {{content}}
+            </div>
+        </article>
+    </main>
+
+    <footer class="narrow">
+        <p>© 2014 – {{year}}  Mike Koz<br><a href="mailto:m@koz.tv">m@koz.tv</a> </p>
+    </footer>
+
+    <script>
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => {
+                document.querySelectorAll('.social-icons i').forEach(el => el.classList.add('fa-loaded'));
+            });
+        } else {
+            window.addEventListener('load', () => {
+                document.querySelectorAll('.social-icons i').forEach(el => el.classList.add('fa-loaded'));
+            });
+        }
+    </script>
+</body>
+</html> 

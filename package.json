@@ -1,0 +1,29 @@
+{
+  "name": "k-engine",
+  "version": "1.0.3",
+  "description": "Static-site engine powering KozTV projects",
+  "bin": { "k-engine": "./cli.js" },
+  "files": ["lib", "templates", "static", "build.js", "serve.js", "cli.js"],
+  "scripts": {
+    "build": "node build.js",
+    "serve": "node serve.js",
+    "dev": "npm run serve"
+  },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "axios": "^1.6.1",
+    "browser-sync": "^3.0.0",
+    "cheerio": "^1.0.0-rc.12",
+    "clean-css": "^5.3.3",
+    "esbuild": "^0.21.0",
+    "express": "^4.18.2",
+    "front-matter": "^4.0.2",
+    "fs-extra": "^11.1.1",
+    "image-size": "^1.2.1",
+    "marked": "^9.1.0",
+    "sharp": "^0.33.5",
+    "turndown": "^7.1.2"
+  },
+  "keywords": ["static-site", "engine", "koztv"],
+  "license": "MIT"
+} 
